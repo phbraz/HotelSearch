@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotelSearchAPI", "HotelSearchAPI\HotelSearchAPI.csproj", "{9978DC77-E6B7-42FE-8846-5239465E709F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{509241EA-80B6-4116-8BC8-869D13791EBD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{9978DC77-E6B7-42FE-8846-5239465E709F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9978DC77-E6B7-42FE-8846-5239465E709F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9978DC77-E6B7-42FE-8846-5239465E709F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{509241EA-80B6-4116-8BC8-869D13791EBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{509241EA-80B6-4116-8BC8-869D13791EBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{509241EA-80B6-4116-8BC8-869D13791EBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{509241EA-80B6-4116-8BC8-869D13791EBD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
