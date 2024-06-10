@@ -8,16 +8,24 @@ namespace Application.Services;
 
 public class HolidayDealsData : IHolidaySearchRequest
 {
-    //I will handle the request here and return the data here. 
+    private readonly Dictionary<string, List<AirportCode>> airPortDictionary = new Dictionary<string, List<AirportCode>>()
+    {
+        { "Any London Airport", Helpers.Data.LondonAirportsCodes() },
+        { "Any Airport", Helpers.Data.FindAllAirportCodes() }
+    };
+    
+    //I will handle the request here and return the data. 
     public async Task<HolidaySearchResponse> FetchHolidaySearchAsync(HolidaySearchRequest request)
     {
         var flight = await FindBestFlight(request);
         var hotel = await FindBestHotel(request);
+        var totalPrice = await CalculateTotalPrice(flight, hotel, request.Duration);
 
         var response = new HolidaySearchResponse()
         {
             Flight = flight,
-            Hotel = hotel
+            Hotel = hotel,
+            TotalPrice = totalPrice
         };
         
         return response;
@@ -25,10 +33,25 @@ public class HolidayDealsData : IHolidaySearchRequest
 
     private async Task<Flight> FindBestFlight(HolidaySearchRequest request)
     {
+        var airportsToSearch = new List<AirportCode>();
+        var departingFrom = request.DepartingFrom;
+        
+        if (airPortDictionary.TryGetValue(departingFrom, out var airportCodes ))
+        {
+            airportsToSearch = airportCodes;
+        }
+        else
+        {
+            airportsToSearch = new List<AirportCode>
+            {
+                new AirportCode() { Code = departingFrom }
+            };
+        }
+        
         var flightsData = await FlightsDataAsync();
         var filteredFlight =  flightsData
-            .Where(x => x.From == request.DepartingFrom
-                        && x.To == request.TravellingTo &&
+            .Where(x => airportsToSearch.Select(a => a.Code).Contains(x.From) &&
+                        x.To == request.TravellingTo &&
                         x.DepartureDate.ToString("dd-MM-yyyy") == request.DepartureDate.ToString("dd-MM-yyyy"))
             .OrderBy(x => x.Price)
             .First();
@@ -46,6 +69,11 @@ public class HolidayDealsData : IHolidaySearchRequest
             .First();
 
         return filteredHotel;
+    }
+
+    private async Task<decimal> CalculateTotalPrice(Flight flight, Hotel hotel, int duration)
+    {
+        return flight.Price + (duration * hotel.PricePerNight);
     }
 
     private Task<List<Flight>> FlightsDataAsync()

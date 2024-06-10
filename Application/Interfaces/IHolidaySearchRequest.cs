@@ -1,5 +1,4 @@
-﻿using Application.DataModels;
-using Application.DTO;
+﻿using Application.DTO;
 
 namespace Application.Interfaces;
 
