@@ -1,5 +1,8 @@
-﻿using Application.DTO;
+﻿using Application.Data;
+using Application.DataModels;
+using Application.DTO;
 using Application.Interfaces;
+using Newtonsoft.Json;
 
 namespace Application.Services;
 
@@ -8,6 +11,53 @@ public class HolidayDealsData : IHolidaySearchRequest
     //I will handle the request here and return the data here. 
     public async Task<HolidaySearchResponse> FetchHolidaySearchAsync(HolidaySearchRequest request)
     {
-        return new HolidaySearchResponse();
+        var flight = await FindBestFlight(request);
+        var hotel = await FindBestHotel(request);
+
+        var response = new HolidaySearchResponse()
+        {
+            Flight = flight,
+            Hotel = hotel
+        };
+        
+        return response;
     }
+
+    private async Task<Flight> FindBestFlight(HolidaySearchRequest request)
+    {
+        var flightsData = await FlightsDataAsync();
+        var filteredFlight =  flightsData
+            .Where(x => x.From == request.DepartingFrom
+                        && x.To == request.TravellingTo &&
+                        x.DepartureDate.ToString("dd-MM-yyyy") == request.DepartureDate.ToString("dd-MM-yyyy"))
+            .OrderBy(x => x.Price)
+            .First();
+
+        return filteredFlight;
+    }
+
+    private async Task<Hotel> FindBestHotel(HolidaySearchRequest request)
+    {
+        var hotelsData = await HotelsDataAsync();
+        var filteredHotel = hotelsData
+            .Where(x => x.LocalAirports.Contains(request.TravellingTo)
+                        && x.Nights == request.Duration)
+            .OrderBy(x => x.PricePerNight)
+            .First();
+
+        return filteredHotel;
+    }
+
+    private Task<List<Flight>> FlightsDataAsync()
+    {
+        var flightsData = JsonConvert.DeserializeObject<List<Flight>>(StaticData.FlightDataJson);
+        return Task.FromResult(flightsData);
+    }
+
+    private Task<List<Hotel>> HotelsDataAsync()
+    {
+        var hotelsData = JsonConvert.DeserializeObject<List<Hotel>>(StaticData.HotelDataJson);
+        return Task.FromResult(hotelsData);
+    }
+    
 }

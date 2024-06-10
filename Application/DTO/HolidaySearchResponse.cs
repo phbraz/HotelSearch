@@ -4,6 +4,6 @@ namespace Application.DTO;
 
 public class HolidaySearchResponse
 {
-    public List<Flight> Flights { get; set; }
-    public List<Hotel> Hotels { get; set; }
+    public Flight Flight { get; set; }
+    public Hotel Hotel { get; set; }
 }
